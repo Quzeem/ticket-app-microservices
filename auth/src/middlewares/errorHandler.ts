@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 // import { RequestValidationError } from '../utils/requestValidationError';
 // import { NotFoundError } from '../utils/notFoundError';
-import { CustomError } from '../utils/customError';
+import { CustomError } from '../errors/customError';
 
 // Global error handler
 // eslint-disable-next-line no-unused-vars

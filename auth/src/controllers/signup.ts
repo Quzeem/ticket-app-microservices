@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { RequestValidationError } from '../utils/requestValidationError';
+import { RequestValidationError } from '../errors/requestValidationError';
+import { BadRequestError } from '../errors/badRequestError';
+import { User } from '../models/userModel';
 
-const signup = (req: Request, res: Response) => {
+const signup = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     throw new RequestValidationError(errors.array({ onlyFirstError: true }));
@@ -11,7 +13,21 @@ const signup = (req: Request, res: Response) => {
     //   .send({ errors: errors.array({ onlyFirstError: true }) });
   }
 
-  res.send('Hello there!');
+  const { email, password } = req.body;
+
+  const existingUser = await User.findOne({ email });
+
+  if (existingUser) {
+    throw new BadRequestError('Email already in use');
+  }
+
+  const user = User.build({ email, password });
+  await user.save();
+
+  res.status(201).send({
+    status: 'success',
+    data: user,
+  });
 };
 
 export { signup };

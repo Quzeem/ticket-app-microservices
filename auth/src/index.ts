@@ -3,7 +3,11 @@ import 'express-async-errors';
 
 import { authRouter } from './routes/authRoutes';
 import { errorHandler } from './middlewares/errorHandler';
-import { NotFoundError } from './utils/notFoundError';
+import { NotFoundError } from './errors/notFoundError';
+import { connectDB } from './config/db';
+
+// connect to DB
+connectDB();
 
 const app = express();
 app.use(express.json());
