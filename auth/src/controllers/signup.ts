@@ -1,18 +1,9 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import { RequestValidationError } from '../errors/requestValidationError';
 import { BadRequestError } from '../errors/badRequestError';
 import { User } from '../models/userModel';
+import { generateAuthToken } from '../utils/generateAuthToken';
 
 const signup = async (req: Request, res: Response) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    throw new RequestValidationError(errors.array({ onlyFirstError: true }));
-    // return res
-    //   .status(400)
-    //   .send({ errors: errors.array({ onlyFirstError: true }) });
-  }
-
   const { email, password } = req.body;
 
   const existingUser = await User.findOne({ email });
@@ -23,6 +14,13 @@ const signup = async (req: Request, res: Response) => {
 
   const user = User.build({ email, password });
   await user.save();
+
+  // Generate JWT
+  const token = generateAuthToken({ id: user.id, email: user.email });
+  // Assign the jwt to session object
+  req.session = {
+    jwt: token,
+  };
 
   res.status(201).send({
     status: 'success',

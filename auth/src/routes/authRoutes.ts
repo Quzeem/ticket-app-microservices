@@ -8,10 +8,13 @@ import { logout } from '../controllers/logout';
 import { getCurrentUser } from '../controllers/currentUser';
 
 import validateSignup from '../middlewares/request-validators/signupValidator';
+import validateLogin from '../middlewares/request-validators/loginValidator';
+import { handleValidationError } from '../middlewares/handleValidationError';
+import { setCurrentUser } from '../middlewares/setCurrentUser';
 
-router.post('/signup', validateSignup, signup);
-router.post('/login', login);
+router.post('/signup', validateSignup, handleValidationError, signup);
+router.post('/login', validateLogin, handleValidationError, login);
 router.post('/logout', logout);
-router.get('/currentuser', getCurrentUser);
+router.get('/currentuser', setCurrentUser, getCurrentUser);
 
 export { router as authRouter };

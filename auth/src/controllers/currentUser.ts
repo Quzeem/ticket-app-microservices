@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 const getCurrentUser = (req: Request, res: Response) => {
-  res.send('Hello there!');
+  res.status(200).send({ status: 'success', data: req.currentUser || null });
 };
 
 export { getCurrentUser };
