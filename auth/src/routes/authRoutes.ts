@@ -15,6 +15,6 @@ import { setCurrentUser } from '../middlewares/setCurrentUser';
 router.post('/signup', validateSignup, handleValidationError, signup);
 router.post('/login', validateLogin, handleValidationError, login);
 router.post('/logout', logout);
-router.get('/currentuser', setCurrentUser, getCurrentUser);
+router.get('/current-user', setCurrentUser, getCurrentUser);
 
 export { router as authRouter };
