@@ -10,7 +10,7 @@ const Index = ({ currentUser }) => {
 // // getInitialProps method is always executed during the server-side rendering process. It's useful for fetching some data specifically for doing some initial rendering of our app
 // Index.getInitialProps = async ({ req }) => {
 //   if (typeof window === undefined) {
-//     // getIntialProps is executing on the server(most of the time)
+//     // getInitialProps is executing on the server(most of the time)
 //     // requests should be made with a specific base url
 //     const { data } = await axios.get(
 //       'http://ingress-nginx.ingress-nginx.svc.cluster.local/api/users/current-user',
@@ -21,7 +21,7 @@ const Index = ({ currentUser }) => {
 
 //     return data;
 //   } else {
-//     // getIntialProps is executing in the browser(only when we navigate from one page to another while in the app)
+//     // getInitialProps is executing in the browser(only when we navigate from one page to another while in the app)
 //     // requests can be made with a base url of ''. The browser will automatically use the current domain as the base url
 //     const { data } = await axios.get('/api/users/current-user');
 
@@ -30,6 +30,7 @@ const Index = ({ currentUser }) => {
 // };
 
 // B) Using buildClient(reusable across all pages)
+// The first argument to page component 'getInitialProps' is 'context' === { req, res }
 Index.getInitialProps = async (context) => {
   const client = buildClient(context);
   const { data } = await client.get('/api/users/current-user');
