@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { BadRequestError } from '../errors/badRequestError';
+// import { BadRequestError } from '../errors/badRequestError';
+import { BadRequestError } from '@zeetickets/lib';
 import { User } from '../models/userModel';
 import { generateAuthToken } from '../utils/generateAuthToken';
 

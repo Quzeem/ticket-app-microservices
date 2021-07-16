@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-const validators = [
+const validateSignup = [
   body('email')
     .trim()
     .notEmpty()
@@ -16,4 +16,4 @@ const validators = [
     .withMessage('Password must be atleast 8 characters in length'),
 ];
 
-export default validators;
+export default validateSignup;

@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-const validators = [
+const validateLogin = [
   body('email')
     .trim()
     .notEmpty()
@@ -11,4 +11,4 @@ const validators = [
   body('password').trim().notEmpty().withMessage('Password is required'),
 ];
 
-export default validators;
+export default validateLogin;

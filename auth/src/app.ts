@@ -3,8 +3,9 @@ import 'express-async-errors';
 import cookieSession from 'cookie-session';
 
 import { authRouter } from './routes/authRoutes';
-import { errorHandler } from './middlewares/errorHandler';
-import { NotFoundError } from './errors/notFoundError';
+// import { errorHandler } from './middlewares/errorHandler';
+// import { NotFoundError } from './errors/notFoundError';
+import { errorHandler, NotFoundError } from '@zeetickets/lib';
 
 const app = express();
 

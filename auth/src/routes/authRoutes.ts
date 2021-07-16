@@ -7,10 +7,11 @@ import { login } from '../controllers/login';
 import { logout } from '../controllers/logout';
 import { getCurrentUser } from '../controllers/currentUser';
 
-import validateSignup from '../middlewares/request-validators/signupValidator';
-import validateLogin from '../middlewares/request-validators/loginValidator';
-import { handleValidationError } from '../middlewares/handleValidationError';
-import { setCurrentUser } from '../middlewares/setCurrentUser';
+import validateSignup from '../middlewares/validators/signupValidator';
+import validateLogin from '../middlewares/validators/loginValidator';
+// import { handleValidationError } from '../middlewares/handleValidationError';
+// import { setCurrentUser } from '../middlewares/setCurrentUser';
+import { handleValidationError, setCurrentUser } from '@zeetickets/lib';
 
 router.post('/signup', validateSignup, handleValidationError, signup);
 router.post('/login', validateLogin, handleValidationError, login);
