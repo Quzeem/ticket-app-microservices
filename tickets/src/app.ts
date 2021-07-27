@@ -1,8 +1,9 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import 'express-async-errors';
 import cookieSession from 'cookie-session';
 
-import { errorHandler, NotFoundError } from '@zeetickets/lib';
+import { ticketsRouter } from './routes/ticketRoutes';
+import { errorHandler, NotFoundError, setCurrentUser } from '@zeetickets/lib';
 
 const app = express();
 
@@ -16,9 +17,14 @@ app.use(
     httpOnly: true,
   })
 );
+app.use(setCurrentUser);
 
-app.all('*', async () => {
-  throw new NotFoundError();
+app.use('/api/tickets', ticketsRouter);
+
+app.all('*', async (req: Request, res: Response) => {
+  throw new NotFoundError(
+    `${req.method} request to: ${req.originalUrl} not available on this server!`
+  );
 });
 app.use(errorHandler);
 

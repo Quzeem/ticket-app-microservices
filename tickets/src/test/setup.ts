@@ -2,12 +2,13 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../app';
+import jwt from 'jsonwebtoken';
 
 // Augment Node.js global object to account for signup method
 declare global {
   namespace NodeJS {
     interface Global {
-      signup(): Promise<string[]>;
+      signup(): string[];
     }
   }
 }
@@ -49,12 +50,26 @@ afterAll(async () => {
 });
 
 // Instead of adding this method to Node.js global object, a module(say authHelper.ts) can be created in test folder and exported across modules where it's needed
-global.signup = async () => {
-  const res = await request(app)
-    .post('/api/users/signup')
-    .send({ email: 'test@test.com', password: 'password' })
-    .expect(201);
+// Faking Authentication
+global.signup = () => {
+  // Build a JWT payload ==> { id, email }
+  const payload = {
+    id: new mongoose.Types.ObjectId().toHexString(),
+    email: 'test@test.com',
+  };
 
-  const cookie = res.get('Set-Cookie');
-  return cookie;
+  // Create JWT
+  const token = jwt.sign(payload, process.env.JWT_SECRET!);
+
+  // Build session object ==> req.session = { jwt: token }
+  const sessionObj = { jwt: token };
+
+  // Turn the session object into JSON
+  const sessionObjJSON = JSON.stringify(sessionObj);
+
+  // Encode the sessionObjJSON as base64
+  const base64 = Buffer.from(sessionObjJSON).toString('base64');
+
+  // return a string that's the cookie with the encoded data
+  return [`express:sess=${base64}`];
 };

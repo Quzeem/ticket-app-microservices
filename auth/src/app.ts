@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import 'express-async-errors';
 import cookieSession from 'cookie-session';
 
@@ -22,8 +22,10 @@ app.use(
 
 app.use('/api/users', authRouter);
 
-app.all('*', async () => {
-  throw new NotFoundError();
+app.all('*', async (req: Request, res: Response) => {
+  throw new NotFoundError(
+    `${req.method} request to: ${req.originalUrl} not available on this server!`
+  );
 });
 app.use(errorHandler);
 
