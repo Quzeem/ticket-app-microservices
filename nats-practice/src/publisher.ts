@@ -11,7 +11,7 @@ const stan = nats.connect('zeeticket', clientId, {
   url: 'http://localhost:4222',
 });
 
-stan.on('connect', () => {
+stan.on('connect', async () => {
   console.log('Publisher connected to NATS');
 
   // // We can only essentially share strings or raw data
@@ -27,12 +27,15 @@ stan.on('connect', () => {
   //   console.log('Event published');
   // });
 
-  const data = {
-    id: '123',
-    title: 'Concert',
-    price: 50,
-    userId: '456',
-  };
-
-  new TicketCreatedPublisher(stan).publish(data);
+  const publisher = new TicketCreatedPublisher(stan);
+  try {
+    await publisher.publish({
+      id: '123',
+      title: 'Concert',
+      price: 50,
+      userId: '456',
+    });
+  } catch (err) {
+    console.error(err);
+  }
 });
