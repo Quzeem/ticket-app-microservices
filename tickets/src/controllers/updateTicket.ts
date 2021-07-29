@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Ticket } from '../models/ticketModel';
-import { NotFoundError } from '@zeetickets/lib';
+import { NotFoundError, NotAuthorizedError } from '@zeetickets/lib';
 
 const updateTicket = async (req: Request, res: Response) => {
   const { title, price } = req.body;
@@ -12,8 +12,7 @@ const updateTicket = async (req: Request, res: Response) => {
   }
 
   if (ticket.userId !== req.currentUser!.id) {
-    res.status(403);
-    throw new Error('Not authorized to update this ticket');
+    throw new NotAuthorizedError();
   }
 
   ticket.set({ title, price });
