@@ -1,13 +1,19 @@
 import { Message, Stan } from 'node-nats-streaming';
+import { Subjects } from './subjects';
+
+interface Event {
+  subject: Subjects;
+  data: any;
+}
 
 // Listener Abstract Class
-export abstract class Listener {
+export abstract class Listener<T extends Event> {
   // Name of the channel a subclass of Listener class is going to listen to(required)
-  abstract subject: string;
+  abstract subject: T['subject'];
   // Name of the queue group a subclass of Listener class is going to join(required)
   abstract queueGroupName: string;
   // Subclasses of Listener class must implement this method to handle message received
-  abstract onMessage(parsedData: any, msg: Message): void;
+  abstract onMessage(parsedData: T['data'], msg: Message): void;
 
   // Accessible in this class definition only
   private client: Stan;
