@@ -1,7 +1,5 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import request from 'supertest';
-import { app } from '../app';
 import jwt from 'jsonwebtoken';
 
 // Augment Node.js global object to account for signup method
@@ -12,6 +10,9 @@ declare global {
     }
   }
 }
+
+// Mocks natsWrapper module
+jest.mock('../config/natsWrapper.ts');
 
 let mongo: any;
 

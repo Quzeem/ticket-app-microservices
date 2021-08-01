@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { Ticket } from '../models/ticketModel';
 import { NotFoundError, NotAuthorizedError } from '@zeetickets/lib';
+import { TicketUpdatedPublisher } from '../events/publishers/ticketUpdatedPublisher';
+import { natsWrapper } from '../config/natsWrapper';
 
 const updateTicket = async (req: Request, res: Response) => {
   const { title, price } = req.body;
@@ -17,6 +19,14 @@ const updateTicket = async (req: Request, res: Response) => {
 
   ticket.set({ title, price });
   await ticket.save();
+
+  // publish event
+  new TicketUpdatedPublisher(natsWrapper.client).publish({
+    id: ticket.id,
+    title: ticket.title,
+    price: ticket.price,
+    userId: ticket.userId,
+  });
 
   res.status(200).send({ status: 'success', data: ticket });
 };
