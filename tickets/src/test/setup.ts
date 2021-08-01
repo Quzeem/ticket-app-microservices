@@ -35,6 +35,9 @@ beforeAll(async () => {
 
 // A hook that will run before each of our tests run
 beforeEach(async () => {
+  // Reset our mock functions. Why? A mock function internally records how many times it gets called, the different arguments it was provided, and so on. This is done to make sure that we are not polluting a test with data from another test.
+  jest.clearAllMocks();
+
   // Get all collections that exists
   const collections = await mongoose.connection.db.collections();
 

@@ -2,6 +2,9 @@ import request from 'supertest';
 import { app } from '../../app';
 import mongoose from 'mongoose';
 
+// Jest is going to redirect this import to the mock natsWrapper
+import { natsWrapper } from '../../config/natsWrapper';
+
 test('should return a statusCode of 404 if a ticket does not exist', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
 
@@ -97,4 +100,22 @@ test('should update a ticket if valid inputs are provided', async () => {
 
   expect(res2.body.data.title).toEqual('Clubfare');
   expect(res2.body.data.price).toEqual(30);
+});
+
+test('should publish an event when a ticket is updated', async () => {
+  const cookie = global.signup();
+
+  const res = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({ title: 'Fanfare', price: 20 })
+    .expect(201);
+
+  await request(app)
+    .put(`/api/tickets/${res.body.data.id}`)
+    .set('Cookie', cookie)
+    .send({ title: 'Clubfare', price: 30 })
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

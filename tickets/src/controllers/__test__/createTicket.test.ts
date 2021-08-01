@@ -2,6 +2,9 @@ import request from 'supertest';
 import { app } from '../../app';
 import { Ticket } from '../../models/ticketModel';
 
+// Jest is going to redirect this import to the mock natsWrapper
+import { natsWrapper } from '../../config/natsWrapper';
+
 test('should have a route handler /api/tickets listening for POST requests', async () => {
   const res = await request(app).post('/api/tickets').send({});
 
@@ -63,4 +66,14 @@ test('should create a ticket with valid inputs', async () => {
 
   tickets = await Ticket.countDocuments({});
   expect(tickets).toEqual(1);
+});
+
+test('should publish an event when a ticket is created', async () => {
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', global.signup())
+    .send({ title: 'Fanfare', price: 20 })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
