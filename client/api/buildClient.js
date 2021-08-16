@@ -1,11 +1,11 @@
 // Preconfigure axios for our use case in getInitialProps method
 import axios from 'axios';
 
-export default ({ req }) => {
-  if (typeof window === undefined) {
+const buildClient = ({ req }) => {
+  if (typeof window === 'undefined') {
     // getIntialProps is executing on the server
     return axios.create({
-      baseURL: 'http://ingress-nginx.ingress-nginx.svc.cluster.local',
+      baseURL: 'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local',
       headers: req.headers,
     });
   } else {
@@ -13,3 +13,5 @@ export default ({ req }) => {
     return axios.create({}); // we can optionally pass in the baseURL as ''
   }
 };
+
+export default buildClient
