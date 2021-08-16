@@ -2,6 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 lib
 
+.DS_Store
+
 ### Node ###
 # Logs
 logs
