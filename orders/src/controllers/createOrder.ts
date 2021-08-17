@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { NotFoundError, BadRequestError, OrderStatus } from '@zeetickets/lib';
 import { Order } from '../models/orderModel';
 import { Ticket } from '../models/ticketModel';
+import { OrderCreatedPublisher } from '../events/publishers/orderCreatedPublisher';
+import { natsWrapper } from '../config/natsWrapper';
 
 const EXPIRATION_WINDOW_SECONDS = 15 * 60;
 
@@ -49,6 +51,17 @@ const createOrder = async (req: Request, res: Response) => {
   await order.save();
 
   // E) Publish an event that the order has been created
+  const publisher = new OrderCreatedPublisher(natsWrapper.client);
+  publisher.publish({
+    id: order.id,
+    status: order.status,
+    userId: order.userId,
+    expiresAt: order.expiresAt.toISOString(),
+    ticket: {
+      id: ticket.id,
+      price: ticket.price,
+    },
+  });
 
   res.status(201).send({ status: 'success', data: order });
 };
