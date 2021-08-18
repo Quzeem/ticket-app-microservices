@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Order, OrderStatus } from './orderModel';
 
 interface TicketAttrs {
+  id: string;
   title: string;
   price: number;
 }
@@ -38,7 +39,10 @@ const ticketSchema = new mongoose.Schema(
   }
 );
 
-ticketSchema.statics.build = (attrs: TicketAttrs) => new Ticket(attrs);
+ticketSchema.statics.build = (attrs: TicketAttrs) => {
+  const ticketData = { _id: attrs.id, ...attrs };
+  return new Ticket(ticketData);
+};
 
 // Run query to look at all orders. Find an order where the ticket is the ticket we just found *and* the order status is *not* cancelled. If we find that order, that means the ticket has been reserved
 ticketSchema.methods.isReserved = async function () {

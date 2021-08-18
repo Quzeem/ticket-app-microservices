@@ -1,4 +1,6 @@
 import { natsWrapper } from './natsWrapper';
+import { TicketCreatedListener } from '../events/listeners/ticketCreatedListeners';
+import { TicketUpdatedListener } from '../events/listeners/ticketUpdatedListener';
 
 export const connectNATS = async () => {
   try {
@@ -14,6 +16,10 @@ export const connectNATS = async () => {
     });
     process.on('SIGINT', () => natsWrapper.client.close()); // Listen for interrupt signals
     process.on('SIGTERM', () => natsWrapper.client.close()); // Listen for terminate signals
+
+    // Initialize listeners to listen for events
+    new TicketCreatedListener(natsWrapper.client).listen();
+    new TicketUpdatedListener(natsWrapper.client).listen();
   } catch (err) {
     console.error(err);
   }
