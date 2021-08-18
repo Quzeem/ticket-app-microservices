@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 interface TicketAttrs {
   title: string;
@@ -10,6 +11,7 @@ interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
   userId: string;
+  version: number;
 }
 
 interface TicketModel extends mongoose.Model<TicketDoc> {
@@ -36,11 +38,16 @@ const ticketSchema = new mongoose.Schema(
       transform(doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-        delete ret.__v;
       },
     },
   }
 );
+
+// Change '__v' to 'version'
+ticketSchema.set('versionKey', 'version');
+
+// Optimisitc Concurrency Control plugin(uses schema version key by default)
+ticketSchema.plugin(updateIfCurrentPlugin);
 
 ticketSchema.statics.build = (attrs: TicketAttrs) => new Ticket(attrs);
 
