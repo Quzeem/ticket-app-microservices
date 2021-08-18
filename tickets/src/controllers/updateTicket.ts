@@ -26,6 +26,7 @@ const updateTicket = async (req: Request, res: Response) => {
     title: ticket.title,
     price: ticket.price,
     userId: ticket.userId,
+    version: ticket.version,
   });
 
   res.status(200).send({ status: 'success', data: ticket });

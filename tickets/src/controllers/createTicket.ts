@@ -17,11 +17,12 @@ const createTicket = async (req: Request, res: Response) => {
   await ticket.save();
 
   // publish event
-  await new TicketCreatedPublisher(natsWrapper.client).publish({
+  new TicketCreatedPublisher(natsWrapper.client).publish({
     id: ticket.id,
     title: ticket.title,
     price: ticket.price,
     userId: ticket.userId,
+    version: ticket.version,
   });
 
   res.status(201).send({ status: 'success', data: ticket });

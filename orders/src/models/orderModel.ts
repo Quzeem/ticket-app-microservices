@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { OrderStatus } from '@zeetickets/lib';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { TicketDoc } from './ticketModel';
 
 export { OrderStatus };
@@ -16,6 +17,7 @@ interface OrderDoc extends mongoose.Document {
   status: OrderStatus;
   expiresAt: Date;
   ticket: TicketDoc;
+  version: number;
 }
 
 interface OrderModel extends mongoose.Model<OrderDoc> {
@@ -51,6 +53,12 @@ const orderSchema = new mongoose.Schema(
     },
   }
 );
+
+// Change '__v' to 'version'
+orderSchema.set('versionKey', 'version');
+
+// Optimisitc Concurrency Control plugin(uses schema version key by default)
+orderSchema.plugin(updateIfCurrentPlugin);
 
 orderSchema.statics.build = (attrs: OrderAttrs) => new Order(attrs);
 

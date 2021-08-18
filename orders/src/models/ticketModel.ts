@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { Order, OrderStatus } from './orderModel';
 
 interface TicketAttrs {
@@ -10,11 +11,16 @@ interface TicketAttrs {
 export interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
+  version: number;
   isReserved(): Promise<boolean>;
 }
 
 interface TicketModel extends mongoose.Model<TicketDoc> {
   build(attrs: TicketAttrs): TicketDoc;
+  findByIdAndPreVersion(eventData: {
+    id: string;
+    version: number;
+  }): Promise<TicketDoc | null>;
 }
 
 const ticketSchema = new mongoose.Schema(
@@ -38,6 +44,30 @@ const ticketSchema = new mongoose.Schema(
     },
   }
 );
+
+// Change '__v' to 'version'
+ticketSchema.set('versionKey', 'version');
+
+// Optimisitc Concurrency Control plugin(uses schema's version key by default)
+ticketSchema.plugin(updateIfCurrentPlugin);
+
+// // Without using mongoose-update-if-current OCC plugin
+// ticketSchema.pre('save', function (next) {
+//   // Specify additional property to attach to the query when calling save() and isNew is false
+//   this.$where = {
+//     version: this.get('version') - 1, // Assuming we are incrementing the doc version by 1 everytime
+//   };
+
+//   next();
+// });
+
+// Custom Query
+ticketSchema.statics.findByIdAndPreVersion = (eventData: {
+  id: string;
+  version: number;
+}) => {
+  return Ticket.findOne({ _id: eventData.id, version: eventData.version - 1 });
+};
 
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
   const ticketData = { _id: attrs.id, ...attrs };
