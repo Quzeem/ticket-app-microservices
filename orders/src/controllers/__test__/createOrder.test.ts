@@ -17,6 +17,7 @@ test('should return a statusCode of 404 if the ticket does not exist', async () 
 
 test('should return a statusCode of 400 if the ticket is already reserved', async () => {
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 50,
   });
@@ -41,6 +42,7 @@ test('should return a statusCode of 400 if the ticket is already reserved', asyn
 
 test('should reserve a ticket if everything went well', async () => {
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 50,
   });
@@ -56,6 +58,7 @@ test('should reserve a ticket if everything went well', async () => {
 // test.todo('emits an order created event');
 test('should emits an order created event', async () => {
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 50,
   });

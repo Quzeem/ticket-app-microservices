@@ -1,4 +1,5 @@
 import request from 'supertest';
+import mongoose from 'mongoose'
 import { app } from '../../app';
 import { Ticket } from '../../models/ticketModel';
 import { OrderStatus } from '../../models/orderModel';
@@ -10,6 +11,7 @@ test('Should cancel a specific order for a user', async () => {
 
   // Create a ticket
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 20,
   });
@@ -44,6 +46,7 @@ test('should emit an order cancelled event', async () => {
 
   // Create a ticket
   const ticket = Ticket.build({
+    id: new mongoose.Types.ObjectId().toHexString(),
     title: 'concert',
     price: 20,
   });
