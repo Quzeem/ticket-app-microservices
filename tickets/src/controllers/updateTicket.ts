@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { Ticket } from '../models/ticketModel';
-import { NotFoundError, NotAuthorizedError } from '@zeetickets/lib';
+import {
+  NotFoundError,
+  NotAuthorizedError,
+  BadRequestError,
+} from '@zeetickets/lib';
 import { TicketUpdatedPublisher } from '../events/publishers/ticketUpdatedPublisher';
 import { natsWrapper } from '../config/natsWrapper';
 
@@ -15,6 +19,11 @@ const updateTicket = async (req: Request, res: Response) => {
 
   if (ticket.userId !== req.currentUser!.id) {
     throw new NotAuthorizedError();
+  }
+
+  // Check if ticket has been reserved
+  if (ticket.orderId) {
+    throw new BadRequestError('Cannot edit a reserved ticket');
   }
 
   ticket.set({ title, price });
