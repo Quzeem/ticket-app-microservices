@@ -1,0 +1,34 @@
+import nats, { Stan } from 'node-nats-streaming';
+
+class NatsWrapper {
+  // Accessible only in this class definiton
+  private _client?: Stan;
+
+  // Expose the NATS client instance
+  get client() {
+    if (!this._client) {
+      throw new Error('Cannot access NATS client before connecting');
+    }
+
+    return this._client;
+  }
+
+  // Connect to NATS streaming server
+  connect(clusterId: string, clientId: string, url: string): Promise<void> {
+    this._client = nats.connect(clusterId, clientId, { url });
+
+    // Modify connecting to NATS streaming server to use async/await instead of callback pattern
+    return new Promise((resolve, reject) => {
+      this.client.on('connect', () => {
+        console.log('Connected to NATS');
+        resolve();
+      });
+      this.client.on('error', (err) => {
+        reject(err);
+      });
+    });
+  }
+}
+
+// Export a single instance of NatsWrapper
+export const natsWrapper = new NatsWrapper();

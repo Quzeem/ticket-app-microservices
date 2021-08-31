@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expiration-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expiration
+  template:
+    metadata:
+      labels:
+        app: expiration
+    spec:
+      containers:
+        - name: expiration
+          image: zeemag/expiration
+          env:
+            - name: NATS_CLIENT_ID
+              valueFrom: # Use the randomly generated pod name by k8s
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: http://nats-srv:4222
+            - name: NATS_CLUSTER_ID
+              value: zeeticket
+            - name: REDIS_HOST
+              value: expiration-redis-srv
+# Since this service is not going to be contacted by any other part of our app and also not going to have any network requests going directly to it, we do not need to set up a cluster IP service.
