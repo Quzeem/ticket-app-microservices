@@ -5,7 +5,7 @@ import { Ticket } from '../models/ticketModel';
 import { OrderCreatedPublisher } from '../events/publishers/orderCreatedPublisher';
 import { natsWrapper } from '../config/natsWrapper';
 
-const EXPIRATION_WINDOW_SECONDS = 15 * 60;
+const EXPIRATION_WINDOW_SECONDS = 1 * 60;
 
 const createOrder = async (req: Request, res: Response) => {
   const { ticketId } = req.body;
