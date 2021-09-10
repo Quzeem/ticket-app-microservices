@@ -1,4 +1,6 @@
 import { natsWrapper } from './natsWrapper';
+import { OrderCancelledListener } from '../events/listeners/orderCancelledListener';
+import { OrderCreatedListener } from '../events/listeners/orderCreatedListener';
 
 export const connectNATS = async () => {
   try {
@@ -15,6 +17,10 @@ export const connectNATS = async () => {
 
     process.on('SIGINT', () => natsWrapper.client.close()); // Listen for interrupt signals
     process.on('SIGTERM', () => natsWrapper.client.close()); // Listen for terminate signals
+
+    // Listen for events
+    new OrderCreatedListener(natsWrapper.client).listen();
+    new OrderCancelledListener(natsWrapper.client).listen();
   } catch (err) {
     console.error(err);
   }
