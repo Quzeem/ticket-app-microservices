@@ -3,6 +3,7 @@ import 'express-async-errors';
 import cookieSession from 'cookie-session';
 
 import { errorHandler, NotFoundError, setCurrentUser } from '@zeetickets/lib';
+import { paymentsRouter } from './routes/paymentRoutes';
 
 const app = express();
 
@@ -17,6 +18,8 @@ app.use(
   })
 );
 app.use(setCurrentUser);
+
+app.use('/api/payments', paymentsRouter);
 
 app.all('*', async (req: Request, res: Response) => {
   throw new NotFoundError(

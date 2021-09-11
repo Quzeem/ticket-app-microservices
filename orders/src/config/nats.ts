@@ -2,6 +2,7 @@ import { natsWrapper } from './natsWrapper';
 import { TicketCreatedListener } from '../events/listeners/ticketCreatedListeners';
 import { TicketUpdatedListener } from '../events/listeners/ticketUpdatedListener';
 import { ExpirationCompleteListener } from '../events/listeners/expirationCompleteListener';
+import { PaymentCreatedListener } from '../events/listeners/paymentCreatedListener';
 
 export const connectNATS = async () => {
   try {
@@ -22,6 +23,7 @@ export const connectNATS = async () => {
     new TicketCreatedListener(natsWrapper.client).listen();
     new TicketUpdatedListener(natsWrapper.client).listen();
     new ExpirationCompleteListener(natsWrapper.client).listen();
+    new PaymentCreatedListener(natsWrapper.client).listen();
   } catch (err) {
     console.error(err);
   }

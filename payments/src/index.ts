@@ -17,6 +17,9 @@ if (!process.env.NATS_URL) {
 if (!process.env.NATS_CLUSTER_ID) {
   throw new Error('NATS_CLUSTER_ID must be defined');
 }
+// if (!process.env.STRIPE_KEY) {
+//   throw new Error('STRIPE_KEY must be defined');
+// }
 
 // Connect to MongoDB
 connectDB();

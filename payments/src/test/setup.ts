@@ -6,13 +6,15 @@ import jwt from 'jsonwebtoken';
 declare global {
   namespace NodeJS {
     interface Global {
-      signup(): string[];
+      signup(id?: string): string[];
     }
   }
 }
 
 // Mocks natsWrapper module
 jest.mock('../config/natsWrapper.ts');
+// Mocks stripe module
+// jest.mock('../config/stripe.ts');
 
 let mongo: any;
 
@@ -55,10 +57,10 @@ afterAll(async () => {
 
 // Instead of adding this method to Node.js global object, a module(say authHelper.ts) can be created in test folder and exported across modules where it's needed
 // Faking Authentication
-global.signup = () => {
+global.signup = (id?: string) => {
   // Build a JWT payload ==> { id, email }
   const payload = {
-    id: new mongoose.Types.ObjectId().toHexString(),
+    id: id || mongoose.Types.ObjectId().toHexString(),
     email: 'test@test.com',
   };
 
